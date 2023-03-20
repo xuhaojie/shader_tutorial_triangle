@@ -1,0 +1,24 @@
+#version 330 core
+
+smooth in vec4 interpolateColor;
+
+// Ouput data
+out vec4 FragColor;
+
+// 需要再次声明
+uniform float time_value;
+
+// uniform vec4 ourColor;
+in vec3 vertexColor;
+in vec2 vertexUV;
+uniform sampler2D myTextureSampler;
+void main()
+{
+	float color_delta = 0.25*cos(time_value*3.14) + 0.75;
+	
+	//FragColor = vec4(vertexColor,1.0);
+	//FragColor = vec4(vertexColor*color_delta,1.0);
+	//FragColor = vec4(texture( myTextureSampler, vertexUV ).rgb, 1.0);
+	vec3 blend_color = (vertexColor + (texture( myTextureSampler, vertexUV ).rgb))/2.0;
+	FragColor = vec4(blend_color, 1.0);
+}

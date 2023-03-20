@@ -1,0 +1,44 @@
+#version 330 core
+
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 1) in vec3 color_modelspace;
+layout(location = 2) in vec2 uv_modelspace;
+
+// 输入的时间变化
+uniform float time_value;
+// 输出的顶点颜色
+out vec3 vertexColor;
+out vec2 vertexUV;
+// 对输入顶点位置进行变换
+vec4 trans_pos(vec3 in_pos){
+    float angle = time_value;
+    mat4 rotate = mat4(
+    cos(angle), sin(angle), 0.0, 0.0,
+    -sin(angle), cos(angle), 0.0, 0.0,
+    0.0,        0.0,         1.0, 0.0,
+    0.0,        0.0,         0.0, 1.0
+    );
+
+    float sx = sin(angle);
+    float sy = sin(angle);
+    float sz = 1.0;
+    mat4 scale = mat4(
+        sx,  0.0, 0.0, 0.0,
+        0.0, sy,  0.0, 0.0,
+        0.0, 0.0, sz, 0.0,
+        0.0, 0.0, 0.0, 1.0
+    );
+
+    vec4 pos = scale * rotate * vec4(vertexPosition_modelspace,1.0);
+    return pos;
+}
+
+void main(){
+    //gl_Position.xyz = vertexPosition_modelspace;
+    //gl_Position.w = 1.0;
+    gl_Position = trans_pos(vertexPosition_modelspace);
+    //gl_Position = vec4(vertexPosition_modelspace.x, 0.5 - vertexPosition_modelspace.y, vertexPosition_modelspace.z, 1.0);
+    vertexColor = color_modelspace;
+    vertexUV = uv_modelspace;
+}
